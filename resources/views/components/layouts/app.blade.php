@@ -38,6 +38,12 @@
                        class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('dashboard') ? 'bg-[#1E2230] text-zinc-100 border border-[#2E3347]' : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#14161F]' }}">
                         Dashboard
                     </a>
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" 
+                           class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('admin.*') ? 'bg-[#1E2230] text-amber-300 border border-amber-500/30' : 'text-amber-400/80 hover:text-amber-300 hover:bg-[#14161F]' }}">
+                            Admin Panel
+                        </a>
+                    @endif
                     <a href="{{ route('profile.index') }}" 
                        class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('profile.*') ? 'bg-[#1E2230] text-zinc-100 border border-[#2E3347]' : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#14161F]' }}">
                         Profile & Akun

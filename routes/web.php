@@ -48,4 +48,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/task-lists/{taskList}/members/{user}', [CollaborationController::class, 'removeMember'])->name('task-lists.members.remove');
     Route::post('/tasks/{task}/assign', [CollaborationController::class, 'assignMember'])->name('tasks.assign');
     Route::post('/tasks/{task}/unassign/{user}', [CollaborationController::class, 'unassignMember'])->name('tasks.unassign');
+
+    // Admin Routes
+    Route::middleware('role')->prefix('admin')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    });
 });

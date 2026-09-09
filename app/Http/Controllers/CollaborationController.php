@@ -6,38 +6,37 @@ use App\Models\Task;
 use App\Models\TaskList;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class CollaborationController extends Controller
 {
+    private function authorizeOwner(TaskList $taskList): void
+    {
+        $user = Auth::user();
+        if ($taskList->user_id !== $user->id && ! $user->isAdmin()) {
+            abort(403, 'Hanya pemilik daftar tugas yang dapat mengelola kolaborator.');
+        }
+    }
+
     public function inviteMember(Request $request, TaskList $taskList)
     {
+        $this->authorizeOwner($taskList);
+
         $validated = $request->validate([
             'email' => ['required', 'email'],
         ]);
 
         $email = strtolower(trim($validated['email']));
-
-        // Check if user already exists
         $user = User::where('email', $email)->first();
 
-        // If user doesn't exist, create account for them with temporary password
-        if (!$user) {
-            $user = User::create([
-                'name' => explode('@', $email)[0],
-                'email' => $email,
-                'password' => Hash::make('password'),
-                'role' => 'member',
-            ]);
+        if (! $user) {
+            return back()->with('error', "Pengguna dengan email '{$email}' belum terdaftar di sistem.");
         }
 
-        // Prevent adding list owner as member
         if ($user->id === $taskList->user_id) {
             return back()->with('error', "Pengguna {$user->name} adalah pemilik daftar tugas ini.");
         }
 
-        // Check if already member
         if ($taskList->members()->where('user_id', $user->id)->exists()) {
             return back()->with('info', "Pengguna {$user->name} sudah menjadi anggota kolaborasi.");
         }
@@ -49,10 +48,10 @@ class CollaborationController extends Controller
 
     public function removeMember(Request $request, TaskList $taskList, User $user)
     {
-        // Detach member from list
+        $this->authorizeOwner($taskList);
+
         $taskList->members()->detach($user->id);
 
-        // Also detach from any task assignments within this list
         $taskIds = $taskList->tasks()->pluck('id');
         $user->assignedTasks()->detach($taskIds);
 
@@ -61,18 +60,30 @@ class CollaborationController extends Controller
 
     public function assignMember(Request $request, Task $task)
     {
+        $this->authorizeOwner($task->taskList);
+
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
         ]);
 
+        $isMember = $task->taskList->members()->where('user_id', $validated['user_id'])->exists();
+        $isOwner = $task->taskList->user_id == $validated['user_id'];
+
+        if (! $isMember && ! $isOwner) {
+            return back()->with('error', 'Pengguna harus menjadi anggota daftar tugas terlebih dahulu.');
+        }
+
         $task->assignees()->syncWithoutDetaching([$validated['user_id']]);
 
         $user = User::find($validated['user_id']);
+
         return back()->with('success', "{$user->name} berhasil ditugaskan ke '{$task->title}'.");
     }
 
     public function unassignMember(Request $request, Task $task, User $user)
     {
+        $this->authorizeOwner($task->taskList);
+
         $task->assignees()->detach($user->id);
 
         return back()->with('success', "Penugasan {$user->name} pada '{$task->title}' dibatalkan.");

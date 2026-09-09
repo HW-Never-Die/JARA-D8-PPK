@@ -26,7 +26,7 @@
                        id="email" 
                        name="email" 
                        x-ref="emailInput"
-                       value="{{ old('email', 'test@example.com') }}" 
+                       value="{{ old('email') }}" 
                        required 
                        autofocus
                        placeholder="nama@domain.com"
@@ -47,7 +47,6 @@
                        id="password" 
                        name="password" 
                        x-ref="passInput"
-                       value="password"
                        required
                        placeholder="••••••••"
                        class="w-full px-3.5 py-2.5 rounded-md bg-[#0C0D12] border border-[#2B3042] text-zinc-100 placeholder-zinc-600 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-mono transition" />

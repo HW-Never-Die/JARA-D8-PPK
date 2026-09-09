@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TaskList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,7 +26,7 @@ class DashboardController extends Controller
         // Aggregate statistics across user's scopes
         $allLists = $ownedLists->merge($memberLists);
         $totalLists = $allLists->count();
-        
+
         $totalTasks = 0;
         $completedTasks = 0;
         $inProgressTasks = 0;

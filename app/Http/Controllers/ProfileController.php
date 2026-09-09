@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -13,6 +12,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::user();
+
         return view('profile.index', compact('user'));
     }
 
@@ -30,8 +30,8 @@ class ProfileController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
-        if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
+        if (! empty($validated['password'])) {
+            $user->password = $validated['password'];
         }
 
         $user->save();

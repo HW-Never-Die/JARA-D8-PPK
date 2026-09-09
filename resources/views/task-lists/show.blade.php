@@ -653,7 +653,7 @@
                         <label class="block text-xs font-mono text-zinc-300 mb-1.5">DESKRIPSI TUGAS</label>
                         <textarea name="description" 
                                   rows="3"
-                                  :value="activeTask ? activeTask.description : ''"
+                                  x-text="activeTask ? activeTask.description : ''"
                                   class="w-full px-3.5 py-2.5 rounded-md bg-[#0C0D12] border border-[#2B3042] text-zinc-100 text-sm focus:outline-none focus:border-violet-500 font-sans transition"></textarea>
                     </div>
 

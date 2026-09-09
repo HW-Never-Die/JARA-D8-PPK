@@ -116,6 +116,20 @@
 
                             <div class="space-y-3">
                                 <div>
+                                    <label for="current_password" class="block text-xs font-mono text-zinc-400 mb-1">
+                                        PASSWORD SAAT INI
+                                    </label>
+                                    <input type="password" 
+                                           id="current_password" 
+                                           name="current_password" 
+                                           placeholder="Masukkan password saat ini untuk konfirmasi"
+                                           class="w-full px-3.5 py-2.5 rounded-md bg-[#0C0D12] border border-[#2B3042] text-zinc-100 text-sm focus:outline-none focus:border-violet-500 font-mono transition" />
+                                    @error('current_password')
+                                        <p class="text-rose-400 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
                                     <label for="password" class="block text-xs font-mono text-zinc-400 mb-1">
                                         PASSWORD BARU
                                     </label>

@@ -9,6 +9,25 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskListController extends Controller
 {
+    private function authorizeOwner(TaskList $taskList): void
+    {
+        $user = Auth::user();
+        if ($taskList->user_id !== $user->id && ! $user->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses ke daftar tugas ini.');
+        }
+    }
+
+    private function authorizeAccess(TaskList $taskList): void
+    {
+        $user = Auth::user();
+        $isOwner = $taskList->user_id === $user->id;
+        $isMember = $taskList->members()->where('user_id', $user->id)->exists();
+
+        if (! $isOwner && ! $isMember && ! $user->isAdmin()) {
+            abort(403, 'Anda bukan anggota dari daftar tugas ini.');
+        }
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -24,13 +43,14 @@ class TaskListController extends Controller
 
     public function show(Request $request, TaskList $taskList)
     {
+        $this->authorizeAccess($taskList);
+
         $taskList->load(['owner', 'members', 'tasks.assignees']);
 
         $user = Auth::user();
         $isOwner = $taskList->user_id === $user->id || $user->isAdmin();
         $isMember = $taskList->members->contains($user->id) || $isOwner;
 
-        // Filtering & Sorting
         $statusFilter = $request->query('status', 'all');
         $priorityFilter = $request->query('priority', 'all');
         $search = $request->query('search', '');
@@ -49,33 +69,28 @@ class TaskListController extends Controller
         if ($search) {
             $tasksQuery->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        if ($sort === 'deadline') {
-            $tasksQuery->orderByRaw('deadline IS NULL, deadline ASC');
-        } elseif ($sort === 'priority') {
-            $tasksQuery->orderByRaw("FIELD(priority, 'high', 'medium', 'low')");
+        if ($sort === 'priority') {
+            $tasksQuery->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 ELSE 4 END");
+        } elseif ($sort === 'deadline') {
+            $tasksQuery->orderByRaw('CASE WHEN deadline IS NULL THEN 1 ELSE 0 END, deadline ASC');
         } else {
             $tasksQuery->latest();
         }
 
         $allTasks = $tasksQuery->get();
 
-        // Categorize for Kanban board
         $todoTasks = $allTasks->where('status', 'todo');
         $inProgressTasks = $allTasks->where('status', 'in_progress');
         $doneTasks = $allTasks->where('status', 'done');
 
-        // Progress stats
         $progress = $taskList->progress();
 
-        // Candidate users for collaboration (all system users not yet in list)
         $existingMemberIds = $taskList->members->pluck('id')->push($taskList->user_id)->all();
         $availableUsers = User::whereNotIn('id', $existingMemberIds)->orderBy('name')->get();
-
-        // Team members available for assignment (owner + members)
         $assignableUsers = $taskList->members->push($taskList->owner)->unique('id');
 
         return view('task-lists.show', compact(
@@ -98,6 +113,8 @@ class TaskListController extends Controller
 
     public function update(Request $request, TaskList $taskList)
     {
+        $this->authorizeOwner($taskList);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -105,11 +122,13 @@ class TaskListController extends Controller
 
         $taskList->update($validated);
 
-        return back()->with('success', "Informasi daftar tugas berhasil diperbarui.");
+        return back()->with('success', 'Informasi daftar tugas berhasil diperbarui.');
     }
 
     public function destroy(TaskList $taskList)
     {
+        $this->authorizeOwner($taskList);
+
         $name = $taskList->name;
         $taskList->delete();
 

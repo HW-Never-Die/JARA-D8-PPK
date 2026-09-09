@@ -132,7 +132,7 @@
                                     <!-- Action Menu (Edit / Delete) -->
                                     <div class="flex items-center gap-1.5">
                                         <button type="button" 
-                                                @click="editModalOpen = true; editListId = {{ $list->id }}; editListName = '{{ addslashes($list->name) }}'; editListDesc = '{{ addslashes($list->description ?? '') }}'"
+                                                @click="editModalOpen = true; editListId = {{ $list->id }}; editListName = {{ Js::from($list->name) }}; editListDesc = {{ Js::from($list->description ?? '') }}"
                                                 title="Edit info daftar"
                                                 class="text-zinc-500 hover:text-zinc-300 p-1 transition">
                                             <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">

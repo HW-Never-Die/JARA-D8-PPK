@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\TaskList;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +15,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@jara.test'],
             [
                 'name' => 'Admin Jara',
-                'password' => Hash::make('password'),
+                'password' => 'password',
                 'role' => 'admin',
             ]
         );
@@ -27,7 +25,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@example.com'],
             [
                 'name' => 'Dewangga Ramadhan',
-                'password' => Hash::make('password'),
+                'password' => 'password',
                 'role' => 'owner',
             ]
         );
@@ -37,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'moses@jara.test'],
             [
                 'name' => 'Moses Christian',
-                'password' => Hash::make('password'),
+                'password' => 'password',
                 'role' => 'member',
             ]
         );
@@ -46,7 +44,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'sulthon@jara.test'],
             [
                 'name' => 'Sulthon Aulia',
-                'password' => Hash::make('password'),
+                'password' => 'password',
                 'role' => 'member',
             ]
         );
@@ -83,7 +81,7 @@ class DatabaseSeeder extends Seeder
                 'priority' => $t['priority'],
                 'deadline' => $t['deadline'],
             ]);
-            if (!empty($t['assignees'])) {
+            if (! empty($t['assignees'])) {
                 $task->assignees()->sync($t['assignees']);
             }
         }
