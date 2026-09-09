@@ -32,9 +32,10 @@ body {
     color: #F1F3F9;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Subtle etching scanline background overlay */
+/* Subtle etching scanline background overlay (Dark Mode) */
 .bg-jara-pattern {
     background-color: #0C0D10;
     background-image: 
@@ -42,6 +43,123 @@ body {
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* ========================================================================= */
+/* LIGHT MODE DESIGN SYSTEM */
+/* ========================================================================= */
+html.light {
+    color-scheme: light;
+}
+
+html.light body {
+    background-color: #F8F9FC;
+    color: #0F121C;
+}
+
+html.light .bg-jara-pattern {
+    background-color: #F8F9FC;
+    background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(144, 59, 238, 0.08), transparent 70%),
+        linear-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+}
+
+/* Header & Navigation in Light */
+html.light header {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border-color: #E2E5F0 !important;
+}
+
+/* Borders in Light */
+html.light .border-\[\#232736\],
+html.light .border-\[\#2B3042\],
+html.light .border-\[\#2E3347\] {
+    border-color: #E2E5F0 !important;
+}
+
+html.light .border-\[\#232736\]\/70,
+html.light .border-\[\#232736\]\/60 {
+    border-color: #ECEEF5 !important;
+}
+
+/* Surfaces and Cards in Light */
+html.light .bg-\[\#12141C\],
+html.light .bg-\[\#12141C\]\/90,
+html.light .bg-\[\#101219\],
+html.light .bg-\[\#141620\],
+html.light .bg-\[\#161823\],
+html.light .bg-\[\#161822\] {
+    background-color: #FFFFFF !important;
+    border-color: #E2E5F0 !important;
+}
+
+html.light .hover\:bg-\[\#141620\]:hover,
+html.light .hover\:bg-\[\#161823\]:hover,
+html.light .hover\:bg-\[\#181A26\]:hover,
+html.light .hover\:bg-\[\#1C2030\]:hover {
+    background-color: #F3F5FA !important;
+}
+
+/* Secondary & Input backgrounds in Light */
+html.light .bg-\[\#0C0D12\],
+html.light .bg-\[\#0C0D10\] {
+    background-color: #F3F5FA !important;
+}
+
+html.light .bg-\[\#1E2230\] {
+    background-color: #E9ECF5 !important;
+    color: #0F121C !important;
+}
+
+/* Form Inputs & Selects in Light */
+html.light input,
+html.light textarea,
+html.light select {
+    background-color: #F3F5FA !important;
+    color: #0F121C !important;
+    border-color: #D6DAE8 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+    color: #9499B0 !important;
+}
+
+/* Typography in Light */
+html.light .text-zinc-100,
+html.light .text-zinc-200 {
+    color: #0F121C !important;
+}
+
+html.light .text-zinc-300 {
+    color: #2E3347 !important;
+}
+
+html.light .text-zinc-400 {
+    color: #555A6E !important;
+}
+
+html.light .text-zinc-500 {
+    color: #71768E !important;
+}
+
+html.light .text-zinc-600 {
+    color: #8E93AB !important;
+}
+
+/* Table in Light */
+html.light thead {
+    background-color: #F0F2F9 !important;
+}
+
+html.light tbody tr:hover {
+    background-color: #F8F9FD !important;
+}
+
+/* Footer in Light */
+html.light footer {
+    border-color: #E2E5F0 !important;
 }
 
 /* Crisp 1px scrollbars */
@@ -58,4 +176,11 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #3B4058;
+}
+
+html.light ::-webkit-scrollbar-track {
+    background: #F8F9FC;
+}
+html.light ::-webkit-scrollbar-thumb {
+    background: #D4D7E5;
 }

@@ -6,6 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Autentikasi' }} — JARA</title>
 
+    <!-- Theme check before render to prevent flicker -->
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        }
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
@@ -13,15 +24,18 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-jara-pattern min-h-screen text-zinc-100 flex flex-col justify-between antialiased selection:bg-violet-600 selection:text-white">
-    <!-- Top Bar with Logo -->
+    <!-- Top Bar with Logo & Theme Switcher -->
     <header class="pt-8 px-6 sm:px-12 flex items-center justify-between">
         <a href="{{ route('login') }}" class="hover:opacity-90 transition">
             <x-logo size="md" />
         </a>
-        <div class="flex items-center gap-3 text-xs font-mono text-zinc-500">
-            <span>D8 PPK</span>
-            <span class="w-1 h-1 rounded-full bg-zinc-700"></span>
-            <span class="text-violet-400">Task Management System</span>
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-zinc-500">
+                <span>D8 PPK</span>
+                <span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+                <span class="text-violet-400">Task Intelligence</span>
+            </div>
+            <x-theme-toggle />
         </div>
     </header>
 

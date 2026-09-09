@@ -6,6 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Workspace' }} — JARA</title>
 
+    <!-- Theme check before render to prevent flicker -->
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        }
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
@@ -14,7 +25,7 @@
 </head>
 <body class="bg-jara-pattern min-h-screen text-zinc-100 flex flex-col antialiased selection:bg-violet-600 selection:text-white">
     <!-- Top Navigation Header -->
-    <header class="border-b border-[#232736] bg-[#0C0D10]/90 backdrop-blur-md sticky top-0 z-40">
+    <header class="border-b border-[#232736] bg-[#0C0D10]/90 backdrop-blur-md sticky top-0 z-40 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             <!-- Brand + Main Links -->
             <div class="flex items-center gap-8">
@@ -34,8 +45,11 @@
                 </nav>
             </div>
 
-            <!-- Header Right: User Info & Actions -->
-            <div class="flex items-center gap-4">
+            <!-- Header Right: Theme Toggle & User Info -->
+            <div class="flex items-center gap-3">
+                <!-- Light / Dark Mode Toggle Button -->
+                <x-theme-toggle />
+
                 <!-- User Profile Pill -->
                 <div class="flex items-center gap-3 pl-3 pr-2 py-1 rounded-md border border-[#232736] bg-[#12141C]">
                     <div class="w-6 h-6 rounded bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-[10px] font-bold text-white font-mono uppercase">
