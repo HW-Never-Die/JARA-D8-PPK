@@ -1,0 +1,27 @@
+flowchart TD
+    Start([User]) --> Auth{Authenticated?}
+    Auth -->|Tidak| Login[Login / Register]
+    Login --> AuthCheck{Kredensial valid?}
+    AuthCheck -->|Tidak| Login
+    AuthCheck -->|Ya| Role{Cek Role}
+
+    Auth -->|Ya| Role
+
+    Role -->|Admin| AdminPanel[Admin: Kelola User]
+    Role -->|Owner| OwnerFlow[Owner: Kelola Task List]
+    Role -->|Member| MemberFlow[Member: Lihat Task]
+
+    OwnerFlow --> CreateList[Buat / Edit / Hapus Task List]
+    CreateList --> ManageTask[Buat / Edit / Hapus Task\nSet Prioritas & Deadline]
+    ManageTask --> Collab[Tambah / Hapus Member]
+    Collab --> Assign[Assign Task ke Member]
+    Assign --> Monitor[Lihat Progress]
+
+    MemberFlow --> ViewTask[Lihat Task yang Di-assign]
+    ViewTask --> UpdateStatus[Ubah Status\nTodo → In Progress → Done]
+    UpdateStatus --> Monitor
+
+    AdminPanel --> CRUD[Lihat / Tambah / Edit / Hapus User\nAtur Role]
+
+    Monitor --> Logout([Logout])
+    CRUD --> Logout
