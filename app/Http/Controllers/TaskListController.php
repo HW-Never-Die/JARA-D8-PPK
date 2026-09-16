@@ -28,6 +28,28 @@ class TaskListController extends Controller
         }
     }
 
+    public function index()
+    {
+        $user = Auth::user();
+
+        $ownedLists = $user->ownedTaskLists()
+            ->with(['tasks', 'members', 'owner'])
+            ->latest()
+            ->get();
+
+        $memberLists = $user->memberTaskLists()
+            ->with(['tasks', 'members', 'owner'])
+            ->latest()
+            ->get();
+
+        return view('task-lists.index', compact('ownedLists', 'memberLists'));
+    }
+
+    public function create()
+    {
+        return view('task-lists.create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

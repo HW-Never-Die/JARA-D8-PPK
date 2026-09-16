@@ -38,6 +38,10 @@
                        class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('dashboard') ? 'bg-[#1E2230] text-zinc-100 border border-[#2E3347]' : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#14161F]' }}">
                         Dashboard
                     </a>
+                    <a href="{{ route('task-lists.index') }}" 
+                       class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('task-lists.*') ? 'bg-[#1E2230] text-zinc-100 border border-[#2E3347]' : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#14161F]' }}">
+                        Task Lists
+                    </a>
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" 
                            class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('admin.*') ? 'bg-[#1E2230] text-amber-300 border border-amber-500/30' : 'text-amber-400/80 hover:text-amber-300 hover:bg-[#14161F]' }}">
@@ -90,42 +94,7 @@
 
     <!-- Notification Toast / Flash Alerts -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
-                 class="mb-4 px-4 py-3 rounded-md bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs flex items-center justify-between transition">
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>{{ session('success') }}</span>
-                </div>
-                <button @click="show = false" class="text-emerald-500 hover:text-emerald-300">&times;</button>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div x-data="{ show: true }" x-show="show" 
-                 class="mb-4 px-4 py-3 rounded-md bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs flex items-center justify-between transition">
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-rose-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>{{ session('error') }}</span>
-                </div>
-                <button @click="show = false" class="text-rose-500 hover:text-rose-300">&times;</button>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="mb-4 px-4 py-3 rounded-md bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs">
-                <p class="font-semibold mb-1">Terdapat kesalahan pada isian form:</p>
-                <ul class="list-disc list-inside space-y-0.5 text-zinc-400">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        <x-alert />
     </div>
 
     <!-- Main Page Content -->

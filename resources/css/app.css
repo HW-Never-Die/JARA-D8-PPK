@@ -184,3 +184,35 @@ html.light ::-webkit-scrollbar-track {
 html.light ::-webkit-scrollbar-thumb {
     background: #D4D7E5;
 }
+
+/* Modal & Alert Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOutUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.2s ease-out;
+}
+
+.animate-fade-out-up {
+    animation: fadeOutUp 0.2s ease-in;
+}
+
