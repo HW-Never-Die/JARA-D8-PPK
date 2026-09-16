@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Task Lists
+    Route::get('/task-lists', [TaskListController::class, 'index'])->name('task-lists.index');
+    Route::get('/task-lists/create', [TaskListController::class, 'create'])->name('task-lists.create');
     Route::post('/task-lists', [TaskListController::class, 'store'])->name('task-lists.store');
     Route::get('/task-lists/{taskList}', [TaskListController::class, 'show'])->name('task-lists.show');
     Route::put('/task-lists/{taskList}', [TaskListController::class, 'update'])->name('task-lists.update');
