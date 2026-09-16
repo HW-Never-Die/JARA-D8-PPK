@@ -19,8 +19,9 @@ class RoleMiddleware
         $user = Auth::user();
 
         // If user is not authenticated, redirect to login
-        if (!$user) {
+        if (! $user) {
             $request->session()->flash('error', 'Please login first.');
+
             return redirect('/login');
         }
 
@@ -28,20 +29,23 @@ class RoleMiddleware
         $path = $request->path();
 
         // Admin routes - only admin can access
-        if (strstartswith($path, 'admin') && !$user->isAdmin()) {
+        if (str_starts_with($path, 'admin') && ! $user->isAdmin()) {
             $request->session()->flash('error', 'You do not have admin access.');
+
             return redirect('/dashboard');
         }
 
         // Owner routes - owner or admin can access
-        if (strstartswith($path, 'owner') && !$user->isAdmin() && $user->role !== 'owner') {
+        if (str_starts_with($path, 'owner') && ! $user->isAdmin() && $user->role !== 'owner') {
             $request->session()->flash('error', 'You do not have owner access.');
+
             return redirect('/dashboard');
         }
 
         // Member routes - member or owner or admin can access
-        if (strstartswith($path, 'member') && !$user->isAdmin() && $user->role !== 'owner' && $user->role !== 'member') {
+        if (str_starts_with($path, 'member') && ! $user->isAdmin() && $user->role !== 'owner' && $user->role !== 'member') {
             $request->session()->flash('error', 'You do not have member access.');
+
             return redirect('/dashboard');
         }
 
