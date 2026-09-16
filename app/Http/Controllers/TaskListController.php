@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\ApiResponse;
+use App\Http\Requests\StoreTaskListRequest;
+use App\Http\Requests\UpdateTaskListRequest;
 use App\Models\TaskList;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TaskListController extends Controller
 {
@@ -28,17 +32,17 @@ class TaskListController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreTaskListRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
+        $userId = auth()->id();
+        $validatedData = $request->validated();
+
+        $taskList = TaskList::create([
+            ...$validatedData,
+            'user_id' => $userId,
         ]);
 
-        $taskList = Auth::user()->ownedTaskLists()->create($validated);
-
-        return redirect()->route('task-lists.show', $taskList)
-            ->with('success', "Daftar tugas '{$taskList->name}' berhasil dibuat.");
+        return ApiResponse::success($taskList, 'Daftar tugas berhasil dibuat.', 201);
     }
 
     public function show(Request $request, TaskList $taskList)
@@ -111,26 +115,31 @@ class TaskListController extends Controller
         ));
     }
 
-    public function update(Request $request, TaskList $taskList)
+    public function update(UpdateTaskListRequest $request, TaskList $taskList)
     {
         $this->authorizeOwner($taskList);
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        $taskList->update($validated);
+        $validatedData = $request->validated();
+        $taskList->update($validatedData);
 
         return back()->with('success', 'Informasi daftar tugas berhasil diperbarui.');
     }
 
     public function destroy(TaskList $taskList)
     {
-        $this->authorizeOwner($taskList);
+        if ($taskList->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke daftar tugas ini.');
+        }
 
         $name = $taskList->name;
-        $taskList->delete();
+
+        DB::transaction(function () use ($taskList) {
+            $taskIds = $taskList->tasks()->pluck('id');
+            DB::table('task_assignments')->whereIn('task_id', $taskIds)->delete();
+            $taskList->tasks()->delete();
+            $taskList->members()->detach();
+            $taskList->delete();
+        });
 
         return redirect()->route('dashboard')
             ->with('success', "Daftar tugas '{$name}' berhasil dihapus.");
